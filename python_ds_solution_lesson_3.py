@@ -20,11 +20,11 @@ class JsonObject:
 class ColorizeMixin:
     repr_color_code = 0
 
-    def __repr__(self):
-        return f'\033[{self.repr_color_code}m{super().__repr__()}\033[0m'
+    def color_string(self, out_str: str):
+        return f'\033[{self.repr_color_code}m{out_str}\033[0m'
 
 
-class Advert(JsonObject):
+class Advert(ColorizeMixin, JsonObject):
     def __init__(self, mapping: dict):
         super().__init__(mapping)
         if not hasattr(self, 'title'):
@@ -41,16 +41,12 @@ class Advert(JsonObject):
             super().__setattr__(key, value)
 
     def __repr__(self):
-        return f'{self.title} | {self.price} ₽'
-
-
-class AdvertColor(ColorizeMixin, Advert):
-    pass
+        return super().color_string(f'{self.title} | {self.price} ₽')
 
 
 def py3():
     lesson_str_python = """{
-        "title": "python", 
+        "title": "python",
         "price": 0,
         "location": {
             "address": "город Москва, Лесная, 7",
@@ -84,12 +80,14 @@ def py3():
     print(iphone_ad.price)
     print(iphone_ad.location.address)
     lesson = json.loads(lesson_str_corgi)
-    corgi_ad = AdvertColor(lesson)
+    corgi_ad = Advert(lesson)
     print(corgi_ad.class_)
     ColorizeMixin.repr_color_code = 33
     print(corgi_ad)
+    print(iphone_ad)
     corgi_ad.repr_color_code = 31
     print(corgi_ad)
+    print(iphone_ad)
 
 
 if __name__ == '__main__':
